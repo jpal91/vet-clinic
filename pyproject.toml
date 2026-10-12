@@ -7,7 +7,9 @@ authors = [
     { name = "Justin Pallansch", email = "pallanschja@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "faker>=40.43.0",
+]
 
 [project.scripts]
 vet-clinic = "vet_clinic:main"

@@ -1,0 +1,61 @@
+[
+  { "name": "Carprofen", "category": "Pain & Inflammation", "species": ["Dog"], "form": "Tablet", "min_dosage": 25, "max_dosage": 100, "measurement": "mg" },
+  { "name": "Meloxicam", "category": "Pain & Inflammation", "species": ["Dog"], "form": "Liquid", "min_dosage": 1, "max_dosage": 8, "measurement": "mg" },
+  { "name": "Robenacoxib", "category": "Pain & Inflammation", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 5, "max_dosage": 40, "measurement": "mg" },
+  { "name": "Gabapentin", "category": "Pain & Inflammation", "species": ["Dog", "Cat"], "form": "Capsule", "min_dosage": 50, "max_dosage": 600, "measurement": "mg" },
+  { "name": "Tramadol", "category": "Pain & Inflammation", "species": ["Dog"], "form": "Tablet", "min_dosage": 25, "max_dosage": 100, "measurement": "mg" },
+  { "name": "Buprenorphine", "category": "Pain & Inflammation", "species": ["Cat"], "form": "Liquid", "min_dosage": 40, "max_dosage": 120, "measurement": "mcg" },
+  { "name": "Librela (Bedinvetmab)", "category": "Pain & Inflammation", "species": ["Dog"], "form": "Injection", "min_dosage": 5, "max_dosage": 60, "measurement": "mg" },
+  { "name": "Solensia (Frunevetmab)", "category": "Pain & Inflammation", "species": ["Cat"], "form": "Injection", "min_dosage": 7, "max_dosage": 14, "measurement": "mg" },
+
+  { "name": "Amoxicillin", "category": "Antibiotic", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 50, "max_dosage": 400, "measurement": "mg" },
+  { "name": "Amoxicillin/Clavulanate", "category": "Antibiotic", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 50, "max_dosage": 600, "measurement": "mg" },
+  { "name": "Cephalexin", "category": "Antibiotic", "species": ["Dog"], "form": "Capsule", "min_dosage": 250, "max_dosage": 750, "measurement": "mg" },
+  { "name": "Cefpodoxime", "category": "Antibiotic", "species": ["Dog"], "form": "Tablet", "min_dosage": 100, "max_dosage": 400, "measurement": "mg" },
+  { "name": "Clindamycin", "category": "Antibiotic", "species": ["Dog", "Cat"], "form": "Capsule", "min_dosage": 25, "max_dosage": 300, "measurement": "mg" },
+  { "name": "Doxycycline", "category": "Antibiotic", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 25, "max_dosage": 200, "measurement": "mg" },
+  { "name": "Metronidazole", "category": "Antibiotic", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 50, "max_dosage": 500, "measurement": "mg" },
+  { "name": "Marbofloxacin", "category": "Antibiotic", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 25, "max_dosage": 200, "measurement": "mg" },
+
+  { "name": "Apoquel (Oclacitinib)", "category": "Allergy & Dermatology", "species": ["Dog"], "form": "Tablet", "min_dosage": 3, "max_dosage": 32, "measurement": "mg" },
+  { "name": "Cytopoint (Lokivetmab)", "category": "Allergy & Dermatology", "species": ["Dog"], "form": "Injection", "min_dosage": 10, "max_dosage": 40, "measurement": "mg" },
+  { "name": "Cyclosporine", "category": "Allergy & Dermatology", "species": ["Dog", "Cat"], "form": "Capsule", "min_dosage": 10, "max_dosage": 100, "measurement": "mg" },
+  { "name": "Prednisone", "category": "Allergy & Dermatology", "species": ["Dog"], "form": "Tablet", "min_dosage": 1, "max_dosage": 40, "measurement": "mg" },
+  { "name": "Prednisolone", "category": "Allergy & Dermatology", "species": ["Cat"], "form": "Tablet", "min_dosage": 1, "max_dosage": 10, "measurement": "mg" },
+  { "name": "Cetirizine", "category": "Allergy & Dermatology", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 5, "max_dosage": 20, "measurement": "mg" },
+  { "name": "Diphenhydramine", "category": "Allergy & Dermatology", "species": ["Dog"], "form": "Tablet", "min_dosage": 10, "max_dosage": 50, "measurement": "mg" },
+
+  { "name": "Maropitant (Cerenia)", "category": "Gastrointestinal", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 16, "max_dosage": 160, "measurement": "mg" },
+  { "name": "Ondansetron", "category": "Gastrointestinal", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 2, "max_dosage": 8, "measurement": "mg" },
+  { "name": "Famotidine", "category": "Gastrointestinal", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 5, "max_dosage": 20, "measurement": "mg" },
+  { "name": "Omeprazole", "category": "Gastrointestinal", "species": ["Dog"], "form": "Capsule", "min_dosage": 10, "max_dosage": 40, "measurement": "mg" },
+  { "name": "Sucralfate", "category": "Gastrointestinal", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 250, "max_dosage": 1000, "measurement": "mg" },
+  { "name": "Mirtazapine", "category": "Gastrointestinal", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 2, "max_dosage": 30, "measurement": "mg" },
+
+  { "name": "Pimobendan (Vetmedin)", "category": "Cardiac", "species": ["Dog"], "form": "Chewable", "min_dosage": 1, "max_dosage": 10, "measurement": "mg" },
+  { "name": "Furosemide", "category": "Cardiac", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 5, "max_dosage": 80, "measurement": "mg" },
+  { "name": "Benazepril", "category": "Cardiac", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 1, "max_dosage": 20, "measurement": "mg" },
+
+  { "name": "Methimazole", "category": "Endocrine", "species": ["Cat"], "form": "Tablet", "min_dosage": 1, "max_dosage": 5, "measurement": "mg" },
+  { "name": "Levothyroxine", "category": "Endocrine", "species": ["Dog"], "form": "Tablet", "min_dosage": 100, "max_dosage": 800, "measurement": "mcg" },
+  { "name": "Vetsulin (Insulin)", "category": "Endocrine", "species": ["Dog", "Cat"], "form": "Injection", "min_dosage": 1, "max_dosage": 20, "measurement": "units" },
+
+  { "name": "Phenobarbital", "category": "Neurologic", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 15, "max_dosage": 100, "measurement": "mg" },
+  { "name": "Levetiracetam", "category": "Neurologic", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 100, "max_dosage": 1000, "measurement": "mg" },
+
+  { "name": "Trazodone", "category": "Behavioral", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 25, "max_dosage": 300, "measurement": "mg" },
+  { "name": "Fluoxetine", "category": "Behavioral", "species": ["Dog", "Cat"], "form": "Capsule", "min_dosage": 5, "max_dosage": 40, "measurement": "mg" },
+  { "name": "Clomipramine", "category": "Behavioral", "species": ["Dog"], "form": "Tablet", "min_dosage": 5, "max_dosage": 80, "measurement": "mg" },
+
+  { "name": "Heartgard Plus (Ivermectin)", "category": "Parasite Prevention", "species": ["Dog"], "form": "Chewable", "min_dosage": 68, "max_dosage": 272, "measurement": "mcg" },
+  { "name": "Simparica (Sarolaner)", "category": "Parasite Prevention", "species": ["Dog"], "form": "Chewable", "min_dosage": 5, "max_dosage": 120, "measurement": "mg" },
+  { "name": "NexGard (Afoxolaner)", "category": "Parasite Prevention", "species": ["Dog"], "form": "Chewable", "min_dosage": 11, "max_dosage": 136, "measurement": "mg" },
+  { "name": "Bravecto (Fluralaner)", "category": "Parasite Prevention", "species": ["Dog"], "form": "Chewable", "min_dosage": 112, "max_dosage": 1400, "measurement": "mg" },
+  { "name": "Revolution (Selamectin)", "category": "Parasite Prevention", "species": ["Dog", "Cat"], "form": "Topical", "min_dosage": 15, "max_dosage": 240, "measurement": "mg" },
+  { "name": "Fenbendazole (Panacur)", "category": "Parasite Prevention", "species": ["Dog", "Cat"], "form": "Liquid", "min_dosage": 100, "max_dosage": 2000, "measurement": "mg" },
+  { "name": "Praziquantel", "category": "Parasite Prevention", "species": ["Dog", "Cat"], "form": "Tablet", "min_dosage": 23, "max_dosage": 136, "measurement": "mg" },
+  { "name": "Pyrantel Pamoate", "category": "Parasite Prevention", "species": ["Dog", "Cat"], "form": "Liquid", "min_dosage": 25, "max_dosage": 500, "measurement": "mg" },
+
+  { "name": "Claro (Otic Solution)", "category": "Ear & Eye", "species": ["Dog"], "form": "Otic", "min_dosage": 1, "max_dosage": 1, "measurement": "mL" },
+  { "name": "Neo-Poly-Dex (Ophthalmic)", "category": "Ear & Eye", "species": ["Dog", "Cat"], "form": "Ophthalmic", "min_dosage": 1, "max_dosage": 2, "measurement": "drops" }
+]

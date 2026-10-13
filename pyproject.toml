@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "faker>=40.43.0",
+    "faker-healthcare-provider>=2.4.1",
 ]
 
 [project.scripts]

@@ -1,0 +1,218 @@
+[
+    {
+        "name": "Abyssinian",
+        "life-span": " 12–15 years",
+        "fact": "Oldest breeds and is believed to have origins in  Ancient Egypt.",
+        "image": "https://www.purina.co.uk/sites/default/files/styles/square_medium_440x440/public/2022-06/Abyssinian-Cat-Breed_0.jpg?itok=r3GCHbzx"
+    },
+    {
+        "name": "Aegean",
+        "life-span": "9-12 years",
+        "fact": "Native to the  Cyclic Islands of Greece and is one of the few naturally occurring breeds.",
+        "image": "https://cdn-images.vetstreet.com/45/8a/b631e9c44a148130feea7c99cbc7/aegean-cat-alamy-dykp57-645.jpg"
+    },
+    {
+        "name": "American Curl",
+        "life-span": " 12–16 years",
+        "fact": "They have curled-back ears, which are the result of a natural genetic mutation.",
+        "image": "https://www.omlet.co.uk/images/cache/1024/682/American-curl-shorthaired-cat-lying-facing-forward.jpg"
+    },
+    {
+        "name": "American Bobtail",
+        "life-span": " 13–15 years",
+        "fact": "Known or their small tail and their loving and fond personalities",
+        "image": "https://www.thesprucepets.com/thmb/9b6pZBd_UiSPabwJzNb6k-CLLv4=/1000x0/filters:no_upscale():strip_icc()/american-bobtail-cat-breed-9f32da27133647db92f4decc93a71e6d.jpg"
+    },
+    {
+        "name": "American  Short hair",
+        "life-span": " 15–20 years",
+        "fact": "Known for their longevity and robust health.",
+        "image": "https://media-be.chewy.com/wp-content/uploads/American-Shorthair-1-1-1024x538.jpg"
+    },
+    {
+        "name": "American Wirehair",
+        "life-span": " 14–18 years",
+        "fact": "Have a unique wiry coat that is resilient to matting and dirt.",
+        "image": "https://www.purina.co.uk/sites/default/files/breed_library/cat_american_wirehair.jpg"
+    },
+    {
+        "name": "Balinese",
+        "life-span": " 15–20 years",
+        "fact": "Long-haired Siamese cats, known for their elegance and loud nature.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFiBC9r44mw8ThD1B6Ska9sSuzRftWcVDt6g&s"
+    },
+    {
+        "name": "Bambino",
+        "life-span": " 12–14 years",
+        "fact": "Hybrid breed, combining the  carelessness of the  Sphinx with the short legs of the Munchkin.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRB2B6xB9R5z9WcbIlX8A8AoXnGkkx1KhaVIw&s"
+    },
+    {
+        "name": "Bengal",
+        "life-span": " 12–16 years",
+        "fact": "Known for their striking leopard-like spots and high energy levels.",
+        "image": "https://www.petssatisfaction.com/cdn/shop/articles/Bengal-kitten-on-carpet_1024x.jpg?v=1704653590"
+    },
+    {
+        "name": "Brazilian  Short hair",
+        "life-span": " 14–20 years",
+        "fact": "A natural breed that is well-adapted to various environments.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXOnwEpa_CG_M2wnmAZ9pz8uqYNp-JyUV4Dg&s"
+    },
+    {
+        "name": "British  Short hair",
+        "life-span": " 12–20 years",
+        "fact": "Known for their plush coats and rounded faces.",
+        "image": "https://www.purina.co.uk/sites/default/files/styles/square_medium_440x440/public/2022-06/British-Shorthair.jpg?itok=eFXNhiXz"
+    },
+    {
+        "name": "British Longhair",
+        "life-span": " 12–20 years",
+        "fact": "A long-haired version of the British  Short hair, with a similarly robust build.",
+        "image": "https://cats.com/wp-content/uploads/2020/10/The-British-Longhair.jpg"
+    },
+    {
+        "name": "Burmese",
+        "life-span": " 10–17 years",
+        "fact": "Known for their silky coats and affectionate, dog-like personalities.",
+        "image": "https://www.purina.co.uk/sites/default/files/styles/square_medium_440x440/public/2022-06/Burmese-Cat.jpg?itok=p26MJciw"
+    },
+    {
+        "name": " Cheetah",
+        "life-span": " 10–15 years",
+        "fact": "A crossbreed between the Bengal and  Occam, known for its wild appearance and gentle temperament.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZG1PhX9AjJULgcgeXBW5xKjRolh5TidR7Qg&s"
+    },
+    {
+        "name": "Cyprus",
+        "life-span": " 12–15 years",
+        "fact": "They have high adaptability and hunting skills.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4zWNzG_LeMcnFJNiEt4NL6T5MpQnpSSl8Mg&s"
+    },
+    {
+        "name": "Devon Rex",
+        "life-span": "9-15 years",
+        "fact": "Has a distinctive curly coat and large, expressive eyes, and are known for their playful nature.",
+        "image": "https://www.purina.co.uk/sites/default/files/styles/square_medium_440x440/public/2022-06/Devon%20Rex.2.jpg?h=a973206e&itok=FP3AB7DA"
+    },
+    {
+        "name": "Exotic  Short hair",
+        "life-span": " 12–15 years",
+        "fact": "A short-haired version of the Persian, known for their round faces and calm demeanor.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3sdmjDzOLgrpP6TXZcYDDy-aW8dBH0GY6Gw&s"
+    },
+    {
+        "name": "Foldex",
+        "life-span": " 12–15 years",
+        "fact": "A mix of Scottish Fold and Exotic  Short hair, known for their folded ears and round faces.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRx7iW_fJuOBkMOXfxFMAejVa0I1i9BkFXAKg&s"
+    },
+    {
+        "name": "German Rex",
+        "life-span": "9-14 years",
+        "fact": "Have a  cozy coat and is known for its playful nature.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjQRYfw9JIKSzUibSLBfUpC7gzEoagPgQdmA&s"
+    },
+    {
+        "name": "Highlander",
+        "life-span": " 10–15 years",
+        "fact": "Known for its distinctive curled ears and bobbed tail, as well as its playful and",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSZKNA79pGaRqHGZDaDXj8nDUGcuM8GRukSA&s"
+    },
+    {
+        "name": "Maine Coon",
+        "life-span": " 10–13 years",
+        "fact": "One of the largest domesticated cat breeds and are known for their friendly and sociable nature.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMDOrWN7UnaHFGFx8dQa_GrAjaP9wAULM6mQ&s"
+    },
+    {
+        "name": "Manx",
+        "life-span": "8-14 years",
+        "fact": "Known for its  aimlessness, although some may have short tails. They are skilled hunters.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmiThLFoXfE6TALwHZPsqDgi9SJrKA954f0A&s"
+    },
+    {
+        "name": " Nibelung",
+        "life-span": " 15–18 years",
+        "fact": "Known for their long, silky fur and striking green eyes, as well as their gentle and reserved nature.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7nnurBf__lhZcdcrP9hLaZxmsjwol4HVnTg&s"
+    },
+    {
+        "name": "Napoleon",
+        "life-span": "9-15 years",
+        "fact": "Are a combination between the Munchkin and Persian breeds, known for their small legs",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXB7Vog7dKAWRvsqRLAHTxvB9a5VBxotU2Ag&s"
+    },
+    {
+        "name": "Oriental  Short hair",
+        "life-span": " 12–15 years",
+        "fact": "Have a sleek, elegant appearance and come in a wide variety of colors and patterns.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbpEf-6xbqrH4CV_-54WEvBSswEWM3viS3EQ&s"
+    },
+    {
+        "name": "Oriental Longhair",
+        "life-span": " 12–15 years",
+        "fact": "Are similar to Oriental  Short hairs but with a longer, silky coat.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTw6cNa6F9TG9r0aOGm9zlZawT6fwzhrl_KjQ&s"
+    },
+    {
+        "name": "Persian",
+        "life-span": " 10–15 years",
+        "fact": "Known for their small and flat faces, they also need regular grooming ",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeqg7bHehr15AqkvSfW8eDu3dpKSy91FE6Lw&s"
+    },
+    {
+        "name": "Pixie-bob",
+        "life-span": " 13–16 years",
+        "fact": "They are like well known wild bobcats, with their tufted ears and short tails.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5jwfiWBVvKZ8j9K-OznICvgwvkqBJI3B7jg&s"
+    },
+    {
+        "name": "Ragdoll",
+        "life-span": " 12–17 years",
+        "fact": "Known for their placid temperament and tendency to go limp when picked up.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLq_aH5Td85nXabz6FY1rtJL1yiFK9vE1nPQ&s"
+    },
+    {
+        "name": "Russian Blue",
+        "life-span": " 15–20 years",
+        "fact": "Doesn't shed too much hair , good for people with allergies. Known for their short coat and are also loyal cats.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8ZLKCDweOkQkmKIFW4NxIoO8n9jEEYRU1ww&s"
+    },
+    {
+        "name": "Savannah",
+        "life-span": " 12–20 years",
+        "fact": "Combination of domestic cats with African servals, known for their exotic appearance and high energy.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0mxxV7T409ls9sF2T5mMQVbCuOC7T2VqOhQ&s"
+    },
+    {
+        "name": "Scottish Fold",
+        "life-span": " 11–14 years",
+        "fact": "Known for their distinctive folded ears, which give them a unique appearance.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbvduaHTBijUvIAZbu6sSzpJEL3X1a7NcKBQ&s"
+    },
+    {
+        "name": "Siamese",
+        "life-span": " 12–20 years",
+        "fact": "Known for their striking blue eyes, short coat, and vocal, social nature.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTo6qErrQzEVv-5mKEC8HPsjiMhUMAyzbBeKQ&s"
+    },
+    {
+        "name": "Snowshoe",
+        "life-span": " 14–19 years",
+        "fact": "Known for their white paws  (like boots or shoes) and have a  very social nature.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlbCqbR_HhHqcjG8FB3QR17uge1rO1dsuDJA&s"
+    },
+    {
+        "name": "Sphynx",
+        "life-span": " 15–20 years",
+        "fact": "Hairless cats that are good for people with allergies also very energetic and love to follow you about.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQI0qnNFw2k5bXXMy9kdz5uXCgYqM7I9PpQjQ&s"
+    },
+    {
+        "name": "Somali",
+        "life-span": " 12–16 years",
+        "fact": "Have long-haired relatives of the Abyssinian, known for their bushy tails and playful nature.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv5YeOHIz5qdRcTdoNvriiP9yrSV-VxU0H0g&s"
+    }
+]

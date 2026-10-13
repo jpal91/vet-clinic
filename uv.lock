@@ -15,6 +15,18 @@ wheels = [
 ]
 
 [[package]]
+name = "faker-healthcare-provider"
+version = "2.4.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "faker" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/cb/68/9559928c6b442bc36f9040a291b4e9451c16f25066d4ac4d42ed753f9f3a/faker_healthcare_provider-2.4.1.tar.gz", hash = "sha256:4a9cd8e687a717323c06e619825269ea2efaeb2fb21c2069e3c7e1c150067315", size = 237487, upload-time = "2026-08-31T02:53:32.765Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6e/23/4c46a5da203c16aeba94613c71a331664f9ddb7c70686be566f7e16ef7c8/faker_healthcare_provider-2.4.1-py3-none-any.whl", hash = "sha256:c5259ed14c153ce2b3b7b1a92ec74aa4ae01ee02b777d97955dc6b50502e7f84", size = 246349, upload-time = "2026-08-31T02:53:31.263Z" },
+]
+
+[[package]]
 name = "tzdata"
 version = "2026.5"
 source = { registry = "https://pypi.org/simple" }
@@ -29,7 +41,11 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "faker" },
+    { name = "faker-healthcare-provider" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "faker", specifier = ">=40.43.0" }]
+requires-dist = [
+    { name = "faker", specifier = ">=40.43.0" },
+    { name = "faker-healthcare-provider", specifier = ">=2.4.1" },
+]

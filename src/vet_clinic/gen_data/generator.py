@@ -1,198 +1,15 @@
-import csv
-import json
 from collections import OrderedDict
-from dataclasses import dataclass
 from datetime import date
-from pathlib import Path
-from typing import Any, ClassVar, Literal
+from pprint import pprint
+from typing import ClassVar
 
-from faker import Faker
-from faker.providers import BaseProvider
-from faker_healthcare import HealthcareProvider
-
-DATA_PATH = Path(__file__).parent.parent.parent / "data"
-fake = Faker()
-
-# fake.seed_instance(os.environ.get("FAKER_SEED", "PawsWell"))
-fake.add_provider(HealthcareProvider)
-
-_csv = csv
-
-
-def get_all_pet_names():
-    with open(DATA_PATH / "male-dog-names.json") as f:
-        male: list[Any] = json.load(f)
-
-    with open(DATA_PATH / "female-dog-names.json") as f:
-        female: list[Any] = json.load(f)
-
-    return [*male, *female]
-
-
-def get_dog_breeds() -> list[str]:
-    with open(DATA_PATH / "dog-breeds.json") as f:
-        res = json.load(f)
-        return [breed["name"] for breed in res]
-
-
-def get_cat_breeds() -> list[str]:
-    with open(DATA_PATH / "cat-breeds.json") as f:
-        res = json.load(f)
-        return [breed["name"] for breed in res]
-
-
-def get_services() -> list["Service"]:
-    with open(DATA_PATH / "services.json") as f:
-        res = json.load(f)
-        return [Service(**r) for r in res]
-
-
-def get_medications() -> list["Medication"]:
-    with open(DATA_PATH / "medications.json") as f:
-        res = json.load(f)
-        return [Medication(**r) for r in res]
-
-
-class DirtyAddressProvider(BaseProvider):
-    def __init__(self, *args):
-        super().__init__(*args)
-        self.suffixes = ["Ln.", "Rd.", "Cir.", "Cv.", "Dr.", "Hwy."]
-        self.city_dict = OrderedDict([
-            ("Charlotte", 0.7),
-            ("Gastonia", 0.05),
-            ("Concord", 0.05),
-            ("Davidson", 0.05),
-            ("Fort Mill", 0.05),
-            ("Raleigh", 0.05),
-            ("Boone", 0.05),
-        ])
-
-    def dirty_suffix(self) -> str:
-        pick = self.random_int(0, 10)
-
-        if pick <= 3:
-            return self.random_element(self.suffixes)
-        else:
-            return fake.street_suffix()
-
-    def dirty_zip(self) -> str:
-        pick = self.random_int(0, 10)
-
-        if pick <= 2:
-            return ""
-        else:
-            return fake.zipcode_in_state("NC")
-
-    def _city(self):
-        return self.random_elements(
-            self.city_dict, length=1, unique=False, use_weighting=True
-        )[0]
-
-    def dirty_address(self) -> str:
-        st_nbr = self.random_int(0, 10_001)
-        st_name = fake.street_name()
-        suffix = self.dirty_suffix()
-        city = self._city()
-        zip_code = self.dirty_zip()
-
-        return f"{st_nbr} {st_name} {suffix}, {city}, NC {zip_code}"
-
-
-@dataclass
-class Medication:
-    name: str
-    category: str
-    species: list[Literal["Dog", "Cat"]]
-    form: str
-    min_dosage: int
-    max_dosage: int
-    measurement: str
-
-    def to_string(self):
-        quantity = fake.random_int(1, 30)
-
-        if self.min_dosage % 5 == 0:
-            step = 5
-        else:
-            step = 1
-
-        dosage = fake.random_int(self.min_dosage, self.max_dosage, step)
-
-        return f"{self.name} {dosage}{self.measurement} x{quantity}"
-
-
-@dataclass
-class Service:
-    name: str
-    category: str
-    species: list[Literal["Dog", "Cat"]]
-    cost: float
-
-    def to_string(self):
-        return f"{self.name} (${self.cost:.2f})"
-
-
-class VetProvider(BaseProvider):
-    services = get_services()
-    medications = get_medications()
-
-    def vet_name(self):
-        pick = self.random_int(0, 3)
-
-        match pick:
-            case 0:
-                last_name = fake.last_name()
-                return "Dr. " + last_name
-            case 1:
-                last_name = fake.last_name()
-                first_initial = fake.first_name()[0]
-                return f"Dr. {first_initial}. {last_name}"
-            case 2:
-                name = fake.name().split(" ")
-                return f"{name[1]}, {name[0]}"
-
-    def vet_services(self, species: str):
-        eligible_services = [serv for serv in self.services if species in serv.species]
-        services = self.random_elements(
-            eligible_services, length=self.random_int(1, 5), unique=True
-        )
-
-        return services
-
-    def vet_medications(self, species: str):
-        eligible_medications = [
-            serv for serv in self.medications if species in serv.species
-        ]
-        medications = self.random_elements(
-            eligible_medications, length=self.random_int(1, 5), unique=True
-        )
-        return medications
-
-
-class PetProvider(BaseProvider):
-    all_names: list[str] = get_all_pet_names()
-    all_dog_breeds: list[str] = get_dog_breeds()
-    all_cat_breeds: list[str] = get_cat_breeds()
-
-    def pet_name(self):
-        return self.random_element(self.all_names)
-
-    def pet_species_w_breed(self):
-        species = "Dog" if random_bool() else "Cat"
-
-        if species == "Dog":
-            return species, self.random_element(self.all_dog_breeds)
-        else:
-            return species, self.random_element(self.all_cat_breeds)
-
+from .faker_instance import fake
+from .providers import DirtyAddressProvider, PetProvider, VetProvider
+from .utils import Service, random_bool
 
 fake.add_provider(VetProvider)
 fake.add_provider(DirtyAddressProvider)
 fake.add_provider(PetProvider)
-
-
-def random_bool():
-    return bool(fake.random_int(0, 1))
 
 
 def dirty_date(d: date) -> str:
@@ -353,9 +170,7 @@ class GenData:
         ]
 
 
-if __name__ == "__main__":
-    from pprint import pprint
-
+def main():
     generator = GenData()
     for _ in range(5):
         pprint(generator.create_visit())

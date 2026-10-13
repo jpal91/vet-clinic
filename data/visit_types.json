@@ -1,0 +1,622 @@
+[
+  {
+    "name": "Initial Visit",
+    "description": "A pet's first visit to the clinic, whether as a puppy or kitten, a new adoption, or a transfer from another vet.",
+    "schedule": {
+      "kind": "once"
+    },
+    "services": [
+      {
+        "service": "New Patient Exam",
+        "probability": 1.0
+      },
+      {
+        "service": "Rabies Vaccine",
+        "probability": 0.95,
+        "min_age_years": 0.3,
+        "interval_days": 1095
+      },
+      {
+        "service": "DHPP Vaccine",
+        "probability": 0.95,
+        "interval_days": 1095
+      },
+      {
+        "service": "FVRCP Vaccine",
+        "probability": 0.95,
+        "interval_days": 1095
+      },
+      {
+        "service": "Bordetella Vaccine",
+        "probability": 0.5,
+        "interval_days": 365
+      },
+      {
+        "service": "Leptospirosis Vaccine",
+        "probability": 0.6,
+        "interval_days": 365
+      },
+      {
+        "service": "FeLV Vaccine",
+        "probability": 0.5,
+        "interval_days": 365
+      },
+      {
+        "service": "Fecal Exam",
+        "probability": 0.7
+      },
+      {
+        "service": "Heartworm Test (4Dx)",
+        "probability": 0.6,
+        "min_age_years": 0.6
+      },
+      {
+        "service": "FeLV/FIV Test",
+        "probability": 0.7
+      },
+      {
+        "service": "Microchip Implant",
+        "probability": 0.35
+      },
+      {
+        "service": "Nail Trim",
+        "probability": 0.2
+      }
+    ],
+    "medications": [
+      {
+        "category": "Parasite Prevention",
+        "probability": 0.8,
+        "count": [
+          1,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Wellness",
+    "description": "Routine yearly checkup with any vaccines that are due.",
+    "schedule": {
+      "kind": "recurring",
+      "interval_days": 365,
+      "jitter_days": 45,
+      "skip_probability": 0.15
+    },
+    "services": [
+      {
+        "service": "Wellness Exam",
+        "probability": 1.0,
+        "max_age_years": 7
+      },
+      {
+        "service": "Senior Wellness Exam",
+        "probability": 1.0,
+        "min_age_years": 7
+      },
+      {
+        "service": "Rabies Vaccine",
+        "probability": 0.95,
+        "interval_days": 1095
+      },
+      {
+        "service": "DHPP Vaccine",
+        "probability": 0.9,
+        "interval_days": 1095
+      },
+      {
+        "service": "FVRCP Vaccine",
+        "probability": 0.9,
+        "interval_days": 1095
+      },
+      {
+        "service": "Bordetella Vaccine",
+        "probability": 0.6,
+        "interval_days": 365
+      },
+      {
+        "service": "Leptospirosis Vaccine",
+        "probability": 0.7,
+        "interval_days": 365
+      },
+      {
+        "service": "Canine Influenza Vaccine",
+        "probability": 0.2,
+        "interval_days": 365
+      },
+      {
+        "service": "Lyme Vaccine",
+        "probability": 0.25,
+        "interval_days": 365
+      },
+      {
+        "service": "FeLV Vaccine",
+        "probability": 0.35,
+        "interval_days": 365
+      },
+      {
+        "service": "Heartworm Test (4Dx)",
+        "probability": 0.7
+      },
+      {
+        "service": "Fecal Exam",
+        "probability": 0.5
+      },
+      {
+        "service": "Senior Blood Panel",
+        "probability": 0.5,
+        "min_age_years": 7
+      },
+      {
+        "service": "Nail Trim",
+        "probability": 0.3
+      },
+      {
+        "service": "Ear Cleaning",
+        "probability": 0.1
+      },
+      {
+        "service": "Anal Gland Expression",
+        "probability": 0.1
+      },
+      {
+        "service": "Microchip Implant",
+        "probability": 0.03
+      }
+    ],
+    "medications": [
+      {
+        "category": "Parasite Prevention",
+        "probability": 0.6,
+        "count": [
+          1,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Sick",
+    "description": "Non-emergency illness: vomiting, itching, ear infections, limping, and so on.",
+    "schedule": {
+      "kind": "random",
+      "annual_rate": 0.6,
+      "senior_multiplier": 2.0
+    },
+    "services": [
+      {
+        "service": "Sick Visit Exam",
+        "probability": 1.0
+      },
+      {
+        "service": "Fecal Exam",
+        "probability": 0.25
+      },
+      {
+        "service": "Urinalysis",
+        "probability": 0.25
+      },
+      {
+        "service": "Complete Blood Count (CBC)",
+        "probability": 0.3
+      },
+      {
+        "service": "Chemistry Panel",
+        "probability": 0.3
+      },
+      {
+        "service": "Skin Cytology",
+        "probability": 0.2
+      },
+      {
+        "service": "Ear Cytology",
+        "probability": 0.2
+      },
+      {
+        "service": "Radiographs (2 Views)",
+        "probability": 0.15
+      },
+      {
+        "service": "Abdominal Ultrasound",
+        "probability": 0.05
+      },
+      {
+        "service": "Thyroid Test (T4)",
+        "probability": 0.2,
+        "min_age_years": 7
+      },
+      {
+        "service": "Blood Pressure Check",
+        "probability": 0.15,
+        "min_age_years": 7
+      },
+      {
+        "service": "Injection Administration",
+        "probability": 0.35
+      },
+      {
+        "service": "Subcutaneous Fluids",
+        "probability": 0.15
+      },
+      {
+        "service": "Ear Cleaning",
+        "probability": 0.15
+      }
+    ],
+    "medications": [
+      {
+        "category": "Antibiotic",
+        "probability": 0.4,
+        "count": [
+          1,
+          1
+        ]
+      },
+      {
+        "category": "Allergy & Dermatology",
+        "probability": 0.3,
+        "count": [
+          1,
+          2
+        ]
+      },
+      {
+        "category": "Gastrointestinal",
+        "probability": 0.3,
+        "count": [
+          1,
+          2
+        ]
+      },
+      {
+        "category": "Pain & Inflammation",
+        "probability": 0.3,
+        "count": [
+          1,
+          1
+        ]
+      },
+      {
+        "category": "Ear & Eye",
+        "probability": 0.15,
+        "count": [
+          1,
+          1
+        ]
+      },
+      {
+        "category": "Endocrine",
+        "probability": 0.08,
+        "count": [
+          1,
+          1
+        ],
+        "min_age_years": 7
+      },
+      {
+        "category": "Cardiac",
+        "probability": 0.08,
+        "count": [
+          1,
+          2
+        ],
+        "min_age_years": 7
+      },
+      {
+        "category": "Neurologic",
+        "probability": 0.03,
+        "count": [
+          1,
+          1
+        ]
+      },
+      {
+        "category": "Behavioral",
+        "probability": 0.03,
+        "count": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Emergency",
+    "description": "Urgent, unplanned visit: toxin ingestion, trauma, severe illness.",
+    "schedule": {
+      "kind": "random",
+      "annual_rate": 0.12,
+      "senior_multiplier": 1.5,
+      "weekend_multiplier": 1.8
+    },
+    "services": [
+      {
+        "service": "Emergency Exam",
+        "probability": 1.0
+      },
+      {
+        "service": "Complete Blood Count (CBC)",
+        "probability": 0.5
+      },
+      {
+        "service": "Chemistry Panel",
+        "probability": 0.5
+      },
+      {
+        "service": "Radiographs (2 Views)",
+        "probability": 0.5
+      },
+      {
+        "service": "Abdominal Ultrasound",
+        "probability": 0.15
+      },
+      {
+        "service": "Injection Administration",
+        "probability": 0.5
+      },
+      {
+        "service": "IV Fluid Therapy",
+        "probability": 0.4
+      },
+      {
+        "service": "Hospitalization (Per Day)",
+        "probability": 0.3,
+        "quantity": [
+          1,
+          3
+        ]
+      },
+      {
+        "service": "Induce Vomiting",
+        "probability": 0.15
+      },
+      {
+        "service": "Wound Care and Bandage",
+        "probability": 0.2
+      },
+      {
+        "service": "Sedation",
+        "probability": 0.15
+      },
+      {
+        "probability": 0.15,
+        "one_of": [
+          {
+            "service": "Laceration Repair",
+            "weight": 3
+          },
+          {
+            "service": "Foreign Body Removal Surgery",
+            "weight": 2
+          }
+        ]
+      }
+    ],
+    "medications": [
+      {
+        "category": "Pain & Inflammation",
+        "probability": 0.5,
+        "count": [
+          1,
+          1
+        ]
+      },
+      {
+        "category": "Gastrointestinal",
+        "probability": 0.4,
+        "count": [
+          1,
+          2
+        ]
+      },
+      {
+        "category": "Antibiotic",
+        "probability": 0.3,
+        "count": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Surgery",
+    "description": "Scheduled surgery: spay/neuter for intact pets (usually around 6 months old), or a procedure such as a mass removal.",
+    "schedule": {
+      "kind": "random",
+      "annual_rate": 0.05,
+      "senior_multiplier": 2.0,
+      "spay_neuter_age_years": [
+        0.4,
+        1.0
+      ],
+      "spay_neuter_probability": 0.85
+    },
+    "services": [
+      {
+        "service": "Complete Blood Count (CBC)",
+        "probability": 0.6
+      },
+      {
+        "service": "Chemistry Panel",
+        "probability": 0.8
+      },
+      {
+        "service": "General Anesthesia",
+        "probability": 1.0
+      },
+      {
+        "probability": 1.0,
+        "one_of": [
+          {
+            "service": "Spay - Canine",
+            "weight": 10,
+            "sex": "F",
+            "requires_intact": true
+          },
+          {
+            "service": "Spay - Feline",
+            "weight": 10,
+            "sex": "F",
+            "requires_intact": true
+          },
+          {
+            "service": "Neuter - Canine",
+            "weight": 10,
+            "sex": "M",
+            "requires_intact": true
+          },
+          {
+            "service": "Neuter - Feline",
+            "weight": 10,
+            "sex": "M",
+            "requires_intact": true
+          },
+          {
+            "service": "Mass Removal",
+            "weight": 3,
+            "min_age_years": 5
+          },
+          {
+            "service": "Cystotomy (Bladder Stone Removal)",
+            "weight": 1,
+            "min_age_years": 2
+          },
+          {
+            "service": "Laceration Repair",
+            "weight": 1
+          }
+        ]
+      },
+      {
+        "service": "IV Fluid Therapy",
+        "probability": 0.5
+      },
+      {
+        "service": "Hospitalization (Per Day)",
+        "probability": 0.2,
+        "quantity": [
+          1,
+          2
+        ]
+      }
+    ],
+    "medications": [
+      {
+        "category": "Pain & Inflammation",
+        "probability": 0.95,
+        "count": [
+          1,
+          2
+        ]
+      },
+      {
+        "category": "Antibiotic",
+        "probability": 0.4,
+        "count": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Dental",
+    "description": "Dental cleaning under anesthesia, often with extractions in older pets.",
+    "schedule": {
+      "kind": "recurring",
+      "interval_days": 730,
+      "jitter_days": 120,
+      "skip_probability": 0.4,
+      "min_age_years": 2
+    },
+    "services": [
+      {
+        "service": "Complete Blood Count (CBC)",
+        "probability": 0.5
+      },
+      {
+        "service": "Chemistry Panel",
+        "probability": 0.7
+      },
+      {
+        "service": "General Anesthesia",
+        "probability": 1.0
+      },
+      {
+        "service": "Dental Cleaning",
+        "probability": 1.0
+      },
+      {
+        "service": "Dental Radiographs",
+        "probability": 0.7
+      },
+      {
+        "service": "Simple Tooth Extraction",
+        "probability": 0.4,
+        "quantity": [
+          1,
+          4
+        ]
+      },
+      {
+        "service": "Surgical Tooth Extraction",
+        "probability": 0.15,
+        "min_age_years": 5,
+        "quantity": [
+          1,
+          2
+        ]
+      }
+    ],
+    "medications": [
+      {
+        "category": "Pain & Inflammation",
+        "probability": 0.6,
+        "count": [
+          1,
+          1
+        ]
+      },
+      {
+        "category": "Antibiotic",
+        "probability": 0.4,
+        "count": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "name": "End of Life Care",
+    "description": "Euthanasia and aftercare. Always the pet's last visit.",
+    "schedule": {
+      "kind": "terminal"
+    },
+    "services": [
+      {
+        "service": "Sedation",
+        "probability": 0.8
+      },
+      {
+        "service": "Euthanasia",
+        "probability": 1.0
+      },
+      {
+        "probability": 0.85,
+        "one_of": [
+          {
+            "service": "Communal Cremation",
+            "weight": 3
+          },
+          {
+            "service": "Private Cremation",
+            "weight": 2
+          }
+        ]
+      }
+    ],
+    "medications": []
+  }
+]

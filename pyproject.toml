@@ -14,6 +14,7 @@ dependencies = [
 
 [project.scripts]
 vet-clinic = "vet_clinic:main"
+gen-data = "vet_clinic.gen_data.generator:main"
 
 [build-system]
 requires = ["uv_build>=0.12.19,<0.13.0"]

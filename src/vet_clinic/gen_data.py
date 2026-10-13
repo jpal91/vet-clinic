@@ -129,7 +129,7 @@ class Service:
     cost: float
 
     def to_string(self):
-        return f"{self.name} (${self.cost})"
+        return f"{self.name} (${self.cost:.2f})"
 
 
 class VetProvider(BaseProvider):
@@ -212,6 +212,9 @@ class Pet:
         self.species = species
         self.breed = breed
 
+    def visit_date(self):
+        return fake.date_between(self.dob)
+
     @property
     def dirty_dob(self):
         return dirty_date(self.dob)
@@ -235,9 +238,6 @@ class Customer:
             self.pets.append(Pet())
 
         self._customer_since = min(p.dob for p in self.pets)
-
-    def visit_date(self):
-        return fake.date_between(self._customer_since)
 
     def random_pet(self):
         return fake.random_element(self.pets)
@@ -291,14 +291,17 @@ class GenData:
     def __init__(self):
         self.customers = [Customer() for _ in range(50)]
         self.clinics = [Clinic() for _ in range(4)]
+        self.invoice_start = fake.random_int(1000, 1_000_000)
 
     def create_visit(self):
-        invoice_no = fake.random_int(10_000, 10_000_000)
+        invoice_no = self.invoice_start
+        self.invoice_start += 1
+
         customer = fake.random_element(self.customers)
         pet: Pet = customer.random_pet()
         clinic = fake.random_element(self.clinics)
         vet: Veterinarian = clinic.random_vet()
-        visit_date = dirty_date(customer.visit_date())
+        visit_date = dirty_date(pet.visit_date())
         visit_type: str = fake.random_elements(
             self.visit_type_dict, length=1, use_weighting=True
         )[0]
@@ -311,7 +314,7 @@ class GenData:
             insurer_servs = fake.random_elements(
                 services, length=fake.random_int(0, len(services)), unique=True
             )
-            invoiced_insurer = invoiced_total - sum(s.cost for s in insurer_servs)
+            invoiced_insurer = sum(s.cost for s in insurer_servs)
             invoiced_owner -= invoiced_insurer
             insurance_paid = invoiced_insurer * (fake.random_int(0, 100) / 100.0)
         else:
@@ -338,14 +341,14 @@ class GenData:
             pet.breed,
             pet.weight,
             vet.dirty_name,
-            ";".join(fake.random_elements(clinic.technicians)),
+            ";".join(fake.random_elements(clinic.technicians, unique=True)),
             ";".join(s.to_string() for s in services),
             ";".join(med.to_string() for med in fake.vet_medications(pet.species)),
             insurance,
-            invoiced_owner,
-            invoiced_insurer,
-            owner_paid,
-            insurance_paid,
+            float(f"{invoiced_owner:.2f}"),
+            float(f"{invoiced_insurer:.2f}"),
+            float(f"{owner_paid:.2f}"),
+            float(f"{insurance_paid:.2f}"),
             fake.random_element(["Cash", "Credit", "Check", None]),
         ]
 

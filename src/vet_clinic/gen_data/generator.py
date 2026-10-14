@@ -71,11 +71,15 @@ class Visit:
             self.pet.breed,
             self.pet.weight,
             clinic.random_vet().dirty_name,
-            ";".join(fake.random_elements(clinic.technicians, unique=True)),
+            ";".join(
+                fake.random_elements(
+                    clinic.technicians, length=fake.random_int(1, 3), unique=True
+                )
+            ),
             ";".join(s.to_string() for s in self.services),
             ";".join(med.to_string() for med in self.prescriptions),
             owner.insurance,
-            owner.policy_number,
+            self.pet.policy_number,
             float(f"{total_due:.2f}"),
             float(f"{amount_paid:.2f}"),
             fake.random_element(["Cash", "Credit", "Check"])
@@ -95,6 +99,11 @@ class Pet:
         self.weight = fake.random_int(20, 100)
         self.owner = owner
 
+        if self.owner.insurance:
+            self.policy_number = fake.random_int(10_000, 100_000)
+        else:
+            self.policy_number = None
+
         species, breed = fake.pet_species_w_breed()
         self.species = species
         self.breed = breed
@@ -110,9 +119,18 @@ class Pet:
 
         first_visit_delta = self.first_visit_date - self.dob
         age_at_first = first_visit_delta.days / 365
-        _, spn_max, __ = VISIT_TYPES["Surgery"].spay_neuter_info()
+        spn_min, spn_max, __ = VISIT_TYPES["Surgery"].spay_neuter_info()
 
-        self.intact = True if age_at_first < spn_max * 365 else random_bool()
+        if age_at_first < spn_max:
+            self.intact = True
+            self.sn_date = fake.date_between(
+                max(
+                    self.dob + timedelta(days=int(spn_min * 365)), self.first_visit_date
+                ),
+                self.dob + timedelta(days=int(spn_max * 365)),
+            )
+        else:
+            self.intact = random_bool()
 
     def visit_date(self):
         return fake.date_between(self.dob)
@@ -125,6 +143,9 @@ class Pet:
         heap: list[tuple[date, str]] = []
         visits = []
 
+        if self.sn_date:
+            heapq.heappush(heap, (self.sn_date, "Surgery"))
+
         for vt in VISIT_TYPES.values():
             if vt.schedule.kind == "once":
                 heapq.heappush(heap, (self.first_visit_date, "Initial Visit"))
@@ -132,11 +153,13 @@ class Pet:
                 nxt = self.next_visit(vt.name, self.first_visit_date)
                 if nxt:
                     heapq.heappush(heap, (nxt, vt.name))
+            elif self.death_date < window_end:
+                heapq.heappush(heap, (self.death_date, "End of Life Care"))
 
         while heap and self.alive:
             when, vt_name = heapq.heappop(heap)
-            if when >= self.death_date or when > window_end:
-                continue
+            if when > window_end:
+                break
 
             visit = self.build_visit(when, VISIT_TYPES[vt_name])
             visits.append(visit)
@@ -185,6 +208,9 @@ class Pet:
                 else:
                     continue
 
+            if opt.requires_intact:
+                self.intact = False
+
             quant = fake.random_int(*opt.quantity)
 
             for _ in range(quant):
@@ -198,11 +224,14 @@ class Pet:
             if not key in MEDICATIONS:
                 continue
 
-            meds = fake.random_elements(
+            rand_meds = fake.random_elements(
                 MEDICATIONS[key], length=fake.random_int(*meds.count), unique=True
             )
 
-            medications.extend(meds)
+            medications.extend(rand_meds)
+
+        if vt.schedule.kind == "terminal":
+            self.alive = False
 
         return Visit(
             when,
@@ -220,7 +249,8 @@ class Pet:
         elif vt.schedule.kind == "recurring":
             interval_date = last + timedelta(days=vt.schedule.interval_days)
             nxt_date = fake.date_between(
-                interval_date - timedelta(days=120), interval_date + timedelta(days=120)
+                interval_date - timedelta(days=vt.schedule.jitter_days),
+                interval_date + timedelta(days=vt.schedule.jitter_days),
             )
 
             if random_chance(vt.schedule.skip_probability):
@@ -243,21 +273,21 @@ class Pet:
             return nxt_date
         elif vt.schedule.kind == "random":
             age = last - self.dob
-            death_delta = self.death_date - self.dob
+            # death_delta = self.death_date - self.dob
 
-            if self.intact and vt.name == "Surgery":
-                spn_min, spn_max, spn_prob = vt.spay_neuter_info()
-                spn_min_age, spn_max_age = spn_min * 365, spn_max * 365
-
-                if (
-                    age.days < spn_max_age
-                    and age.days + 365 >= spn_min_age
-                    and random_chance(spn_prob)
-                ):
-                    return fake.date_between(
-                        self.dob + timedelta(days=int(spn_min_age)),
-                        self.dob + timedelta(days=int(spn_max_age)),
-                    )
+            #             if self.intact and vt.name == "Surgery":
+            #                 spn_min, spn_max, spn_prob = vt.spay_neuter_info()
+            #                 spn_min_age, spn_max_age = spn_min * 365, spn_max * 365
+            #
+            #                 if (
+            #                     age.days < spn_max_age
+            #                     and age.days + 365 >= spn_min_age
+            #                     and random_chance(spn_prob)
+            #                 ):
+            #                     return fake.date_between(
+            #                         self.dob + timedelta(days=int(spn_min_age)),
+            #                         self.dob + timedelta(days=int(spn_max_age)),
+            #                     )
 
             rate = vt.schedule.annual_rate
 
@@ -267,23 +297,6 @@ class Pet:
             gap_days = fake.random.expovariate(rate) * 365
 
             return last + timedelta(days=gap_days)
-
-
-#
-#             while age.days < death_delta.days:
-#                 age += timedelta(days=365)
-#                 prob = vt.schedule.annual_rate
-#
-#                 if (age.days / 365) >= 8.0:
-#                     prob /= vt.schedule.senior_multiplier
-#
-#                 day = self.dob + age
-#
-#                 if day.weekday() >= 5:
-#                     prob /= vt.schedule.weekend_multiplier
-#
-#                 if random_chance(prob):
-#                     return day
 
 
 class Customer:
@@ -304,23 +317,6 @@ class Customer:
         self.moved = fake.date_between("-20y")
         self.clinic = clinic
         self.insurance = fake.random_element(["InsuraPet", "PawShield", None])
-
-        if self.insurance:
-            self.policy_number = fake.random_int(10_000, 100_000)
-        else:
-            self.policy_number = None
-
-    #         self.pets = []
-    #
-    #         n: int = fake.random_elements(self.pet_dist, length=1, use_weighting=True)[0]
-    #
-    #         for _ in range(n):
-    #             self.pets.append(Pet())
-    #
-    #         self._customer_since = min(p.dob for p in self.pets)
-
-    # def random_pet(self):
-    #     return fake.random_element(self.pets)
 
     def customer_address(self, when: date):
         if when < self.moved:
@@ -362,81 +358,6 @@ class Clinic:
         return fake.random_element(self.vets)
 
 
-# class GenData:
-#     visit_type_dict: ClassVar[OrderedDict] = OrderedDict([
-#         ("Wellness", 0.6),
-#         ("Sick", 0.1),
-#         ("Emergency", 0.05),
-#         ("Surgery", 0.05),
-#         ("Dental", 0.2),
-#     ])
-#
-#     def __init__(self):
-#         self.customers = [Customer() for _ in range(50)]
-#         self.clinics = [Clinic() for _ in range(4)]
-#         self.invoice_start = fake.random_int(1000, 1_000_000)
-#
-#     def create_visit(self):
-#         invoice_no = self.invoice_start
-#         self.invoice_start += 1
-#
-#         customer = fake.random_element(self.customers)
-#         pet: Pet = customer.random_pet()
-#         clinic = fake.random_element(self.clinics)
-#         vet: Veterinarian = clinic.random_vet()
-#         visit_date = dirty_date(pet.visit_date())
-#         visit_type: str = fake.random_elements(
-#             self.visit_type_dict, length=1, use_weighting=True
-#         )[0]
-#         services: list[Service] = fake.vet_services(pet.species)
-#         invoiced_total = sum(s.cost for s in services)
-#         invoiced_owner = invoiced_total
-#         insurance = fake.random_element(["InsuraPet", "PawShield", None])
-#
-#         if insurance:
-#             insurer_servs = fake.random_elements(
-#                 services, length=fake.random_int(0, len(services)), unique=True
-#             )
-#             invoiced_insurer = sum(s.cost for s in insurer_servs)
-#             invoiced_owner -= invoiced_insurer
-#             insurance_paid = invoiced_insurer * (fake.random_int(0, 100) / 100.0)
-#         else:
-#             invoiced_insurer = 0.0
-#             insurance_paid = 0
-#
-#         owner_paid = invoiced_owner * (fake.random_int(0, 100) / 100.0)
-#
-#         return [
-#             str(invoice_no),
-#             visit_date,
-#             visit_type,
-#             clinic.name,
-#             clinic.phone_no,
-#             customer.first_name,
-#             customer.last_name,
-#             customer.phone_number,
-#             customer.email_address,
-#             customer.customer_address(),
-#             pet.name,
-#             pet.dirty_dob,
-#             pet.sex,
-#             pet.species,
-#             pet.breed,
-#             pet.weight,
-#             vet.dirty_name,
-#             ";".join(fake.random_elements(clinic.technicians, unique=True)),
-#             ";".join(s.to_string() for s in services),
-#             ";".join(med.to_string() for med in fake.vet_medications(pet.species)),
-#             insurance,
-#             float(f"{invoiced_owner:.2f}"),
-#             float(f"{invoiced_insurer:.2f}"),
-#             float(f"{owner_paid:.2f}"),
-#             float(f"{insurance_paid:.2f}"),
-#             fake.random_element(["Cash", "Credit", "Check", None]),
-#         ]
-#
-
-
 def main(count=100):
     clinics = [Clinic() for _ in range(4)]
     customers = [Customer(fake.random_element(clinics)) for _ in range(50)]
@@ -454,7 +375,7 @@ def main(count=100):
 
     from pprint import pprint
 
-    for v in visits[:10]:
+    for v in visits[-50:]:
         v.invoice_no = start_n
         start_n += 1
         item = v.csv_row()

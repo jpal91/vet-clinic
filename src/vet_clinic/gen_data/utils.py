@@ -44,7 +44,7 @@ def get_cat_breeds() -> list[str]:
 def get_services() -> dict[str, "Service"]:
     with open(DATA_PATH / "services.json") as f:
         res = json.load(f)
-        return {r.name: Service(**r) for r in res}
+        return {r["name"]: Service(**r) for r in res}
 
 
 def get_medications() -> dict[tuple[str, str], list["Medication"]]:
@@ -222,7 +222,9 @@ class VisitType:
         )
 
 
-def load_visit_types(path: Path = DATA_PATH) -> dict[str, VisitType]:
+def load_visit_types(
+    path: Path = DATA_PATH / "visit_types.json",
+) -> dict[str, VisitType]:
     with open(path) as f:
         res = json.load(f)
         return {vt["name"]: VisitType.from_dict(vt) for vt in res}

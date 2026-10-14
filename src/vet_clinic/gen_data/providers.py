@@ -7,10 +7,9 @@ from .utils import (
     get_all_pet_names,
     get_cat_breeds,
     get_dog_breeds,
-    get_medications,
-    get_services,
     random_bool,
 )
+
 
 class DirtyAddressProvider(BaseProvider):
     def __init__(self, *args):
@@ -58,8 +57,8 @@ class DirtyAddressProvider(BaseProvider):
 
 
 class VetProvider(BaseProvider):
-    services = get_services()
-    medications = get_medications()
+    # services = get_services()
+    # medications = get_medications()
 
     def vet_name(self):
         pick = self.random_int(0, 3)
@@ -76,22 +75,22 @@ class VetProvider(BaseProvider):
                 name = fake.name().split(" ")
                 return f"{name[1]}, {name[0]}"
 
-    def vet_services(self, species: str):
-        eligible_services = [serv for serv in self.services if species in serv.species]
-        services = self.random_elements(
-            eligible_services, length=self.random_int(1, 5), unique=True
-        )
+    #     def vet_services(self, species: str):
+    #         eligible_services = [serv for serv in self.services if species in serv.species]
+    #         services = self.random_elements(
+    #             eligible_services, length=self.random_int(1, 5), unique=True
+    #         )
+    #
+    #         return services
 
-        return services
-
-    def vet_medications(self, species: str):
-        eligible_medications = [
-            serv for serv in self.medications if species in serv.species
-        ]
-        medications = self.random_elements(
-            eligible_medications, length=self.random_int(1, 5), unique=True
-        )
-        return medications
+    # def vet_medications(self, species: str):
+    #     eligible_medications = [
+    #         serv for serv in self.medications if species in serv.species
+    #     ]
+    #     medications = self.random_elements(
+    #         eligible_medications, length=self.random_int(1, 5), unique=True
+    #     )
+    #     return medications
 
 
 class PetProvider(BaseProvider):

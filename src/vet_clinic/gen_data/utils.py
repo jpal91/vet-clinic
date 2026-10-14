@@ -1,5 +1,6 @@
 import json
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Any, Literal
 
@@ -8,7 +9,13 @@ from .faker_instance import fake
 DATA_PATH = Path(__file__).resolve().parents[3] / "data"
 
 
-def random_bool():
+def dirty_date(d: date) -> str:
+    choices = ["%m/%d/%Y", "%Y/%m/%d", "%Y-%m-%d"]
+    pick = fake.random_element(choices)
+    return d.strftime(pick)
+
+
+def random_bool() -> bool:
     return bool(fake.random_int(0, 1))
 
 
@@ -34,16 +41,29 @@ def get_cat_breeds() -> list[str]:
         return [breed["name"] for breed in res]
 
 
-def get_services() -> list["Service"]:
+def get_services() -> dict[str, "Service"]:
     with open(DATA_PATH / "services.json") as f:
         res = json.load(f)
-        return [Service(**r) for r in res]
+        return {r.name: Service(**r) for r in res}
 
 
-def get_medications() -> list["Medication"]:
+def get_medications() -> dict[tuple[str, str], list["Medication"]]:
     with open(DATA_PATH / "medications.json") as f:
         res = json.load(f)
-        return [Medication(**r) for r in res]
+        map = {}
+
+        for item in res:
+            cat = item["category"]
+
+            for s in item["species"]:
+                key = (s, cat)
+
+                if not key in map:
+                    map[key] = []
+
+                map[key].append(Medication(**item))
+
+        return map
 
 
 @dataclass
@@ -139,6 +159,7 @@ class ServiceOption:
 class VisitService:
     probability: float
     options: list[ServiceOption]
+    pick_one: bool
 
     @classmethod
     def from_dict(cls, data: dict) -> "VisitService":
@@ -150,7 +171,7 @@ class VisitService:
         else:
             options = [ServiceOption(**data)]
 
-        return cls(probability, options)
+        return cls(probability, options, "one_of" in data)
 
     @property
     def is_group(self) -> bool:
@@ -187,8 +208,21 @@ class VisitType:
             medications=[VisitMedication(**m) for m in data["medications"]],
         )
 
+    def spay_neuter_info(self) -> tuple[float, float, float]:
+        assert (
+            self.schedule.kind == "random"
+            and self.name == "Surgery"
+            and self.schedule.spay_neuter_age_years
+            and self.schedule.spay_neuter_probability
+        )
 
-def load_visit_types(path: Path) -> dict[str, VisitType]:
+        return (
+            *self.schedule.spay_neuter_age_years,
+            self.schedule.spay_neuter_probability,
+        )
+
+
+def load_visit_types(path: Path = DATA_PATH) -> dict[str, VisitType]:
     with open(path) as f:
         res = json.load(f)
         return {vt["name"]: VisitType.from_dict(vt) for vt in res}

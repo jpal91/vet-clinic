@@ -1,6 +1,6 @@
-import bisect
 import heapq
-from collections import OrderedDict, defaultdict
+import time
+from collections import OrderedDict
 from dataclasses import dataclass
 from datetime import date, timedelta
 from typing import ClassVar
@@ -79,7 +79,7 @@ class Visit:
             ";".join(s.to_string() for s in self.services),
             ";".join(med.to_string() for med in self.prescriptions),
             owner.insurance,
-            self.pet.policy_number,
+            self.pet.insurance_policy(),
             float(f"{total_due:.2f}"),
             float(f"{amount_paid:.2f}"),
             fake.random_element(["Cash", "Credit", "Check"])
@@ -99,38 +99,44 @@ class Pet:
         self.weight = fake.random_int(20, 100)
         self.owner = owner
 
-        if self.owner.insurance:
-            self.policy_number = fake.random_int(10_000, 100_000)
-        else:
-            self.policy_number = None
+        # if self.owner.insurance:
+        #     rand_ltrs = "".join(fake.random_letters(5))
+        #     uniq_nbrs = str(time.time_ns())[9:]
+        #     self.policy_number = (
+        #         f"{self.owner.insurance.lower()}-{rand_ltrs}-{uniq_nbrs}"
+        #     )
+        # else:
+        #     self.policy_number = None
 
         species, breed = fake.pet_species_w_breed()
         self.species = species
         self.breed = breed
 
-        self.interval_map: defaultdict[str, int] = defaultdict(lambda: 0)
+        self.interval_map: dict[str, int] = {}
         self.alive = True
-        self.first_visit_date = max(
-            fake.date_this_decade(), self.dob + timedelta(days=30)
-        )
         self.death_date = fake.date_between(
             self.dob + timedelta(days=365 * 8), self.dob + timedelta(365 * 20)
         )
+        self.first_visit_date = fake.date_between(self.dob, self.death_date)
 
         first_visit_delta = self.first_visit_date - self.dob
         age_at_first = first_visit_delta.days / 365
-        spn_min, spn_max, __ = VISIT_TYPES["Surgery"].spay_neuter_info()
+        spn_min, spn_max, prob = VISIT_TYPES["Surgery"].spay_neuter_info()
+        self.sn_date = None
 
         if age_at_first < spn_max:
             self.intact = True
-            self.sn_date = fake.date_between(
-                max(
-                    self.dob + timedelta(days=int(spn_min * 365)), self.first_visit_date
-                ),
-                self.dob + timedelta(days=int(spn_max * 365)),
-            )
+
+            if random_chance(prob):
+                self.sn_date = fake.date_between(
+                    max(
+                        self.dob + timedelta(days=int(spn_min * 365)),
+                        self.first_visit_date,
+                    ),
+                    self.dob + timedelta(days=int(spn_max * 365)),
+                )
         else:
-            self.intact = random_bool()
+            self.intact = random_chance(0.2)
 
     def visit_date(self):
         return fake.date_between(self.dob)
@@ -140,37 +146,39 @@ class Pet:
         return dirty_date(self.dob)
 
     def simulate(self, window_end: date) -> list[Visit]:
-        heap: list[tuple[date, str]] = []
+        heap: list[tuple[date, str, bool]] = []
         visits = []
 
         if self.sn_date:
-            heapq.heappush(heap, (self.sn_date, "Surgery"))
+            heapq.heappush(heap, (self.sn_date, "Surgery", True))
 
         for vt in VISIT_TYPES.values():
             if vt.schedule.kind == "once":
-                heapq.heappush(heap, (self.first_visit_date, "Initial Visit"))
+                heapq.heappush(heap, (self.first_visit_date, "Initial Visit", False))
             elif vt.schedule.kind != "terminal":
+                if vt.name == "Surgery" and self.sn_date:
+                    continue
                 nxt = self.next_visit(vt.name, self.first_visit_date)
                 if nxt:
-                    heapq.heappush(heap, (nxt, vt.name))
+                    heapq.heappush(heap, (nxt, vt.name, False))
             elif self.death_date < window_end:
-                heapq.heappush(heap, (self.death_date, "End of Life Care"))
+                heapq.heappush(heap, (self.death_date, "End of Life Care", False))
 
         while heap and self.alive:
-            when, vt_name = heapq.heappop(heap)
+            when, vt_name, planned = heapq.heappop(heap)
             if when > window_end:
                 break
 
-            visit = self.build_visit(when, VISIT_TYPES[vt_name])
+            visit = self.build_visit(when, VISIT_TYPES[vt_name], planned)
             visits.append(visit)
 
             nxt = self.next_visit(vt_name, when)
             if nxt:
-                heapq.heappush(heap, (nxt, vt_name))
+                heapq.heappush(heap, (nxt, vt_name, False))
 
         return visits
 
-    def build_visit(self, when: date, vt: VisitType) -> Visit:
+    def build_visit(self, when: date, vt: VisitType, planned_neuter=False) -> Visit:
         age_days = (when - self.dob).days
         services = []
         medications = []
@@ -187,6 +195,7 @@ class Pet:
                     or age_days > (opt.max_age_years or age_days) * 365
                     or self.sex != (opt.sex or self.sex)
                     or (opt.requires_intact and not self.intact)
+                    or (not opt.requires_intact and planned_neuter)
                     or self.species not in SERVICES[opt.service].species
                 )
             ]
@@ -201,12 +210,12 @@ class Pet:
             serv = SERVICES[opt.service]
 
             if opt.interval_days:
-                last = self.interval_map[opt.service]
+                last = self.interval_map.get(opt.service)
 
-                if age_days >= last + opt.interval_days:
-                    self.interval_map[opt.service] = age_days
-                else:
+                if last is not None and age_days < last + opt.interval_days:
                     continue
+
+                self.interval_map[opt.service] = age_days
 
             if opt.requires_intact:
                 self.intact = False
@@ -216,8 +225,14 @@ class Pet:
             for _ in range(quant):
                 services.append(serv)
 
+        age_years = age_days / 365
+
         for meds in vt.medications:
-            if not (random_chance(meds.probability)):
+            if (
+                not random_chance(meds.probability)
+                or (meds.min_age_years and age_years < meds.min_age_years)
+                or (meds.max_age_years and age_years > meds.max_age_years)
+            ):
                 continue
 
             key = (self.species, meds.category)
@@ -298,6 +313,23 @@ class Pet:
 
             return last + timedelta(days=gap_days)
 
+    def insurance_policy(self):
+        if not self.owner.insurance:
+            return
+
+        nbrs = str(time.time_ns())[9:]
+        match self.owner.insurance:
+            case "InsuraPet":
+                ltrs = "".join(fake.random_letters(5))
+                return f"insurapet-{ltrs}-{nbrs[::-1]}"
+            case "PawShield":
+                ltrs = "".join(fake.random_letters(10))
+                return f"{nbrs}-{ltrs}-ps"
+            case _:
+                seq = list(fake.random_letters(9)) + [*nbrs]
+                fake.random.shuffle(seq)
+                return "".join(seq)
+
 
 class Customer:
     pet_dist: ClassVar[OrderedDict] = OrderedDict([(1, 0.7), (2, 0.25), (3, 0.05)])
@@ -316,7 +348,12 @@ class Customer:
         self.old_address = fake.dirty_address()
         self.moved = fake.date_between("-20y")
         self.clinic = clinic
-        self.insurance = fake.random_element(["InsuraPet", "PawShield", None])
+        self.insurance = fake.random_element([
+            "InsuraPet",
+            "PawShield",
+            "Universal Animal",
+            None,
+        ])
 
     def customer_address(self, when: date):
         if when < self.moved:
@@ -364,22 +401,27 @@ def main(count=100):
     visits: list[Visit] = []
     today = date.today()
 
-    for _ in range(10):
+    for _ in range(count):
         pet = Pet(fake.random_element(customers))
         new_visits = pet.simulate(today)
 
-        for v in new_visits:
-            bisect.insort_left(visits, v, key=lambda visit: visit.visit_date)
+        visits.extend(new_visits)
+        # for v in new_visits:
+        #     visits.p
+        #     bisect.insort_left(visits, v, key=lambda visit: visit.visit_date)
 
+    visits.sort(key=lambda visit: visit.visit_date)
     start_n = fake.random_int(5000, 1_000_000)
 
     from pprint import pprint
 
-    for v in visits[-50:]:
+    for v in visits:
         v.invoice_no = start_n
         start_n += 1
         item = v.csv_row()
-        pprint(item)
+
+        if v.pet.owner.insurance == "Universal Animal":
+            pprint(item)
 
     # generator = GenData()
     # for _ in range(5):

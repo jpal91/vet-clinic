@@ -6,6 +6,8 @@ from datetime import date, timedelta
 from pathlib import Path
 from typing import ClassVar
 
+import pandas as pd
+
 from .faker_instance import fake
 from .providers import DirtyAddressProvider, PetProvider, VetProvider
 from .utils import (
@@ -15,7 +17,9 @@ from .utils import (
     VisitType,
     dirty_date,
     get_medications,
+    get_medications_raw,
     get_services,
+    get_services_raw,
     load_visit_types,
     random_bool,
 )
@@ -39,11 +43,12 @@ class Visit:
     visit_date: date
     visit_type: str
     pet: "Pet"
+    weight: int
     services: list[Service]
     prescriptions: list[Medication]
     invoice_no: int | None = None
 
-    def csv_row(self):
+    def data_row(self):
         owner = self.pet.owner
         clinic = self.pet.owner.clinic
         total_due = self.invoiced_total()
@@ -57,7 +62,7 @@ class Visit:
                 amount_paid = 0
 
         return [
-            str(self.invoice_no),
+            self.invoice_no,
             dirty_date(self.visit_date),
             self.visit_type,
             clinic.name,
@@ -72,7 +77,7 @@ class Visit:
             self.pet.sex,
             self.pet.species,
             self.pet.breed,
-            self.pet.weight,
+            self.weight,
             clinic.random_vet().dirty_name,
             ";".join(
                 fake.random_elements(
@@ -101,13 +106,15 @@ class Pet:
             WINDOW_START - timedelta(days=365 * 12), WINDOW_END - timedelta(weeks=8)
         )
         self.sex = "M" if random_bool() else "F"
-        self.weight = fake.random_int(20, 100)
         self.owner = owner
 
         self.policy_id = self.insurance_policy()
 
         species, breed = fake.pet_species_w_breed()
         self.species = species
+        self.weight = (
+            fake.random_int(20, 100) if species == "Dog" else fake.random_int(6, 15)
+        )
         self.breed = breed
 
         self.interval_map: dict[str, int] = {}
@@ -252,10 +259,17 @@ class Pet:
         if vt.schedule.kind == "terminal":
             self.alive = False
 
+        weight = self.weight
+        self.weight = fake.random_int(
+            max(self.weight - 5, 10 if self.species == "Dog" else 6),
+            min(self.weight + 5, 90 if self.species == "Dog" else 15),
+        )
+
         return Visit(
             when,
             vt.name,
             self,
+            weight,
             services,
             medications,
         )
@@ -334,7 +348,11 @@ class Customer:
         self.email_address = self._gen_email_address() if random_chance(0.9) else None
         self.address = fake.dirty_address()
         self.old_address = fake.dirty_address()
-        self.moved = fake.date_between("-20y")
+        self.moved = (
+            fake.date_between(WINDOW_START, WINDOW_END)
+            if random_chance(0.25)
+            else WINDOW_START
+        )
         self.clinic = clinic
         self.insurance = fake.random_element([
             "InsuraPet",
@@ -388,16 +406,17 @@ class Veterinarian:
 
 class Clinic:
     def __init__(self):
-        self.name = "PawsWell - " + fake.street_name()
+        self.street_name = fake.street_name()
+        self.name = "PawsWell - " + self.street_name
         self.vets = [Veterinarian() for _ in range(3)]
-        self.technicians = [fake.name() for _ in range(5)]
+        self.technicians = [f"{fake.first_name()} {fake.last_name()}" for _ in range(5)]
         self.phone_no = fake.basic_phone_number()
 
     def random_vet(self) -> Veterinarian:
         return fake.random_element(self.vets)
 
 
-def generate_visits(target: int) -> list[Visit]:
+def generate_visits(target: int) -> tuple[list[Visit], list[Clinic]]:
     clinics = [Clinic() for _ in range(4)]
     visits: list[Visit] = []
     while len(visits) < target:
@@ -405,10 +424,10 @@ def generate_visits(target: int) -> list[Visit]:
         for _ in range(customer.no_of_pets()):
             visits.extend(Pet(customer).simulate())
     visits.sort(key=lambda v: v.visit_date)
-    return visits
+    return visits, clinics
 
 
-CSV_HEADER = [
+VISITS_COLUMNS = [
     "InvoiceNo",
     "VisitDate",
     "VisitType",
@@ -436,6 +455,18 @@ CSV_HEADER = [
     "PaymentMethod",
 ]
 
+CLINIC_COLUMNS = ["ClinicName", "ClinicPhone", "Veterinarians", "Technicians"]
+SERVICES_COLUMNS = ["Name", "Category", "Species", "Cost"]
+MEDICATIONS_COLUMNS = [
+    "Name",
+    "Category",
+    "Species",
+    "Form",
+    "MinDosage",
+    "MaxDosage",
+    "Measurement",
+]
+
 
 def write_csv(visits: list[Visit], path: Path, start_invoice: int | None = None) -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -445,22 +476,80 @@ def write_csv(visits: list[Visit], path: Path, start_invoice: int | None = None)
 
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(CSV_HEADER)
+        writer.writerow(VISITS_COLUMNS)
 
         for visit in sorted(visits, key=lambda v: v.visit_date):
             visit.invoice_no = invoice_no
             invoice_no += 1
 
-            row = visit.csv_row()
-            assert len(row) == len(CSV_HEADER), (
-                "csv_row() and CSV_HEADER are out of sync"
+            row = visit.data_row()
+            assert len(row) == len(VISITS_COLUMNS), (
+                "csv_row() and VISITS_COLUMNS are out of sync"
             )
             writer.writerow(row)
 
     return len(visits)
 
 
+def write_xlsx(
+    visits: list[Visit],
+    clinics: list[Clinic],
+    path: Path,
+    start_invoice: int | None = None,
+):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    invoice_no = (
+        start_invoice if start_invoice is not None else fake.random_int(10_000, 99_999)
+    )
+
+    visit_rows = []
+    clinic_rows = []
+    services_rows = []
+    medications_rows = []
+
+    for visit in sorted(visits, key=lambda v: v.visit_date):
+        visit.invoice_no = invoice_no
+        invoice_no += 1
+
+        visit_rows.append(visit.data_row())
+
+    for clinic in clinics:
+        row = [
+            clinic.street_name,
+            clinic.phone_no,
+            ";".join([f"{dr.first_name} {dr.last_name}" for dr in clinic.vets]),
+            ";".join(clinic.technicians),
+        ]
+
+        clinic_rows.append(row)
+
+    for service in get_services_raw():
+        row = [";".join(v) if k == "species" else v for k, v in service.items()]
+        services_rows.append(row)
+
+    for med in get_medications_raw():
+        row = [";".join(v) if k == "species" else v for k, v in med.items()]
+        medications_rows.append(row)
+
+    visit_df = pd.DataFrame(visit_rows, columns=VISITS_COLUMNS)
+    clinic_df = pd.DataFrame(clinic_rows, columns=CLINIC_COLUMNS)
+    service_df = pd.DataFrame(services_rows, columns=SERVICES_COLUMNS)
+    med_df = pd.DataFrame(medications_rows, columns=MEDICATIONS_COLUMNS)
+
+    with pd.ExcelWriter(path) as writer:
+        visit_df.to_excel(writer, sheet_name="PawsWell_Visits", index=False)
+        print(f"Wrote {len(visit_df)} rows to sheet - PawsWell_Visits")
+        clinic_df.to_excel(writer, sheet_name="Supplement_Clinics", index=False)
+        print(f"Wrote {len(clinic_df)} rows to sheet - Supplement_Clinics")
+        service_df.to_excel(writer, sheet_name="Supplement_Services", index=False)
+        print(f"Wrote {len(service_df)} rows to sheet - Supplement_Services")
+        med_df.to_excel(writer, sheet_name="Supplement_Medications", index=False)
+        print(f"Wrote {len(med_df)} rows to sheet - Supplement_Medications")
+
+
 def main(count=2000):
-    visits = generate_visits(count)
-    n = write_csv(visits, DATA_PATH / "PawsWell_Visits_0nf.csv")
-    print(f"{n} rows written")
+    visits, clinics = generate_visits(count)
+    write_xlsx(visits, clinics, DATA_PATH / "PawsWell_Visits_0nf.xlsx")
+
+    # n = write_csv(visits, DATA_PATH / "PawsWell_Visits_0nf.csv")
+    # print(f"{n} rows written")

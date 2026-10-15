@@ -41,29 +41,39 @@ def get_cat_breeds() -> list[str]:
         return [breed["name"] for breed in res]
 
 
-def get_services() -> dict[str, "Service"]:
+def get_services_raw() -> list[dict[str, Any]]:
     with open(DATA_PATH / "services.json") as f:
         res = json.load(f)
-        return {r["name"]: Service(**r) for r in res}
+        return res
+
+
+def get_services() -> dict[str, "Service"]:
+    res = get_services_raw()
+    return {r["name"]: Service(**r) for r in res}
+
+
+def get_medications_raw() -> list[dict[str, Any]]:
+    with open(DATA_PATH / "medications.json") as f:
+        res = json.load(f)
+        return res
 
 
 def get_medications() -> dict[tuple[str, str], list["Medication"]]:
-    with open(DATA_PATH / "medications.json") as f:
-        res = json.load(f)
-        map = {}
+    res = get_medications_raw()
+    map = {}
 
-        for item in res:
-            cat = item["category"]
+    for item in res:
+        cat = item["category"]
 
-            for s in item["species"]:
-                key = (s, cat)
+        for s in item["species"]:
+            key = (s, cat)
 
-                if not key in map:
-                    map[key] = []
+            if not key in map:
+                map[key] = []
 
-                map[key].append(Medication(**item))
+            map[key].append(Medication(**item))
 
-        return map
+    return map
 
 
 @dataclass

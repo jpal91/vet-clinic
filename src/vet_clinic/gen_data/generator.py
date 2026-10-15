@@ -331,7 +331,7 @@ class Customer:
         self.first_name = fake.first_name()
         self.last_name = fake.last_name()
         self.phone_number = fake.basic_phone_number()
-        self.email_address = fake.free_email() if random_chance(0.9) else None
+        self.email_address = self._gen_email_address() if random_chance(0.9) else None
         self.address = fake.dirty_address()
         self.old_address = fake.dirty_address()
         self.moved = fake.date_between("-20y")
@@ -354,6 +354,17 @@ class Customer:
 
     def paid_amount(self):
         return fake.random_elements(self.payment_amt, length=1, use_weighting=True)[0]
+
+    def _gen_email_address(self):
+        domain = fake.free_email_domain()
+        match fake.random_int(0, 2):
+            case 0:
+                return f"{self.first_name}{self.last_name}@{domain}"
+            case 1:
+                nbrs = fake.random_int(10, 99)
+                return f"{self.first_name.lower()}{nbrs}@{domain}"
+            case _:
+                return f"{self.last_name.lower()}.{self.first_name[0].lower()}@{domain}"
 
 
 class Veterinarian:

@@ -113,7 +113,7 @@ class Pet:
         species, breed = fake.pet_species_w_breed()
         self.species = species
         self.weight = (
-            fake.random_int(20, 100) if species == "Dog" else fake.random_int(6, 15)
+            fake.random_int(20, 90) if species == "Dog" else fake.random_int(6, 15)
         )
         self.breed = breed
 
@@ -260,9 +260,10 @@ class Pet:
             self.alive = False
 
         weight = self.weight
-        self.weight = fake.random_int(
-            max(self.weight - 5, 10 if self.species == "Dog" else 6),
-            min(self.weight + 5, 90 if self.species == "Dog" else 15),
+        self.weight = (
+            fake.random_int(max(self.weight - 5, 10), min(self.weight + 5, 90))
+            if self.species == "Dog"
+            else fake.random_int(max(self.weight - 1, 6), min(self.weight + 1, 15))
         )
 
         return Visit(
@@ -484,7 +485,7 @@ def write_csv(visits: list[Visit], path: Path, start_invoice: int | None = None)
 
             row = visit.data_row()
             assert len(row) == len(VISITS_COLUMNS), (
-                "csv_row() and VISITS_COLUMNS are out of sync"
+                "data_row() and VISITS_COLUMNS are out of sync"
             )
             writer.writerow(row)
 
@@ -545,6 +546,12 @@ def write_xlsx(
         print(f"Wrote {len(service_df)} rows to sheet - Supplement_Services")
         med_df.to_excel(writer, sheet_name="Supplement_Medications", index=False)
         print(f"Wrote {len(med_df)} rows to sheet - Supplement_Medications")
+
+    owners = len({v.pet.owner for v in visits})
+    pets = len({v.pet for v in visits})
+
+    print(f"Owner count - {owners}")
+    print(f"Pet count - {pets}")
 
 
 def main(count=2000):

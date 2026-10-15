@@ -109,6 +109,9 @@ class Pet:
 
         self.interval_map: dict[str, int] = {}
         self.alive = True
+        self.death_date = fake.date_between(
+            self.dob + timedelta(days=365 * 8), self.dob + timedelta(365 * 20)
+        )
         self.death_date = max(self.death_date, WINDOW_START + timedelta(days=30))
         self.first_visit_date = fake.date_between(
             max(self.dob + timedelta(weeks=8), WINDOW_START),
@@ -163,7 +166,7 @@ class Pet:
         while heap and self.alive:
             when, vt_name, planned = heapq.heappop(heap)
 
-            assert when < WINDOW_START
+            assert when >= WINDOW_START
             if when > WINDOW_END:
                 break
 
@@ -337,6 +340,9 @@ class Customer:
             None,
         ])
 
+    def no_of_pets(self):
+        return fake.random_elements(self.pet_dist, length=1, use_weighting=True)[0]
+
     def customer_address(self, when: date):
         if when < self.moved:
             return self.old_address
@@ -377,30 +383,16 @@ class Clinic:
         return fake.random_element(self.vets)
 
 
-def main(count=100):
+def generate_visits(target: int) -> list[Visit]:
     clinics = [Clinic() for _ in range(4)]
-    customers = [Customer(fake.random_element(clinics)) for _ in range(50)]
     visits: list[Visit] = []
+    while len(visits) < target:
+        customer = Customer(fake.random_element(clinics))
+        for _ in range(customer.no_of_pets()):
+            visits.extend(Pet(customer).simulate())
+    visits.sort(key=lambda v: v.visit_date)
+    return visits
 
-    for _ in range(count):
-        pet = Pet(fake.random_element(customers))
-        new_visits = pet.simulate()
 
-        visits.extend(new_visits)
-
-    visits.sort(key=lambda visit: visit.visit_date)
-    start_n = fake.random_int(5000, 1_000_000)
-
-    from pprint import pprint
-
-    for v in visits:
-        v.invoice_no = start_n
-        start_n += 1
-        item = v.csv_row()
-
-        # if v.pet.owner.insurance == "Universal Animal":
-        pprint(item)
-
-    # generator = GenData()
-    # for _ in range(5):
-    #     pprint(generator.create_visit())
+def main(count=2000):
+    visits = generate_visits(count)

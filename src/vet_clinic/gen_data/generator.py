@@ -1,12 +1,15 @@
+import csv
 import heapq
 from collections import OrderedDict
 from dataclasses import dataclass
 from datetime import date, timedelta
+from pathlib import Path
 from typing import ClassVar
 
 from .faker_instance import fake
 from .providers import DirtyAddressProvider, PetProvider, VetProvider
 from .utils import (
+    DATA_PATH,
     Medication,
     Service,
     VisitType,
@@ -328,7 +331,7 @@ class Customer:
         self.first_name = fake.first_name()
         self.last_name = fake.last_name()
         self.phone_number = fake.basic_phone_number()
-        self.email_address = fake.free_email() if random_bool() else None
+        self.email_address = fake.free_email() if random_chance(0.9) else None
         self.address = fake.dirty_address()
         self.old_address = fake.dirty_address()
         self.moved = fake.date_between("-20y")
@@ -394,5 +397,59 @@ def generate_visits(target: int) -> list[Visit]:
     return visits
 
 
+CSV_HEADER = [
+    "InvoiceNo",
+    "VisitDate",
+    "VisitType",
+    "Clinic",
+    "ClinicPhone",
+    "OwnerFirstName",
+    "OwnerLastName",
+    "OwnerPhone",
+    "OwnerEmail",
+    "OwnerAddress",
+    "PetName",
+    "PetDOB",
+    "PetSex",
+    "Species",
+    "Breed",
+    "PetWeightLbs",
+    "AttendingVet",
+    "Technicians",
+    "Services",
+    "Prescriptions",
+    "InsuranceProvider",
+    "PolicyNumber",
+    "InvoiceTotal",
+    "AmountPaid",
+    "PaymentMethod",
+]
+
+
+def write_csv(visits: list[Visit], path: Path, start_invoice: int | None = None) -> int:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    invoice_no = (
+        start_invoice if start_invoice is not None else fake.random_int(10_000, 99_999)
+    )
+
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(CSV_HEADER)
+
+        for visit in sorted(visits, key=lambda v: v.visit_date):
+            visit.invoice_no = invoice_no
+            invoice_no += 1
+
+            row = visit.csv_row()
+            assert len(row) == len(CSV_HEADER), (
+                "csv_row() and CSV_HEADER are out of sync"
+            )
+            writer.writerow(row)
+
+    return len(visits)
+
+
 def main(count=2000):
     visits = generate_visits(count)
+    n = write_csv(visits, DATA_PATH / "PawsWell_Visits_0nf.csv")
+    print(f"{n} rows written")
